@@ -1,5 +1,6 @@
 import org.java3.chess.model.Challenge;
 import org.java3.chess.model.Game;
+import org.java3.chess.model.Move;
 import org.java3.chess.model.Player;
 import org.java3.chess.tools.Color;
 import org.junit.Test;
@@ -37,6 +38,10 @@ public class EntityManagerTest {
             manager.getTransaction().begin();
             Challenge challenge = new Challenge(player1, player2, Color.WHITE);
             manager.persist(challenge);
+            manager.getTransaction().commit();
+            manager.getTransaction().begin();
+            Move move = new Move(game, "e2e4");
+            manager.persist(move);
             manager.getTransaction().commit();
         } finally {
             manager.close();

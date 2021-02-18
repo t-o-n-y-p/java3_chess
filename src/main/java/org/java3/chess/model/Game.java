@@ -3,6 +3,7 @@ package org.java3.chess.model;
 import org.java3.chess.tools.GameUtil;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "games")
@@ -32,6 +33,10 @@ public class Game {
 
     @Column(length = 1000)
     private String description;
+
+    @OneToMany
+    @JoinColumn(name = "game_id")
+    private List<Move> moves;
 
     public Game() {
     }

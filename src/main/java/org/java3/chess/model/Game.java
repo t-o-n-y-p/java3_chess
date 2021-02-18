@@ -25,10 +25,10 @@ public class Game {
     private Player playerToMove;
 
     @Column(nullable = false, length = 100)
-    private String fen = GameUtil.STARTING_POSITION_FEN;
+    private String fen;
 
     @Column(name = "is_completed", nullable = false)
-    private boolean isCompleted = false;
+    private boolean isCompleted;
 
     @Column(length = 1000)
     private String description;
@@ -40,6 +40,8 @@ public class Game {
         this.white = white;
         this.black = black;
         playerToMove = white;
+        fen = GameUtil.STARTING_POSITION_FEN;
+        isCompleted = false;
     }
 
     public int getId() {

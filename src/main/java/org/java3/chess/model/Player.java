@@ -7,9 +7,6 @@ import java.util.List;
 @Table(name = "players")
 public class Player {
 
-    @Transient
-    private final double DEFAULT_RATING = 1200.0;
-
     @Id
     @GeneratedValue
     private int id;
@@ -21,7 +18,7 @@ public class Player {
     private String password;
 
     @Column(nullable = false, scale = 1)
-    private double rating = DEFAULT_RATING;
+    private double rating;
 
     @OneToMany
     @JoinColumn(name = "to_id")
@@ -33,6 +30,7 @@ public class Player {
     public Player(String login, String password) {
         this.login = login;
         this.password = password;
+        rating = 1200.0;
     }
 
     public int getId() {

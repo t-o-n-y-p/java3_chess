@@ -51,7 +51,7 @@ public final class GameUtil {
     public static List<List<String>> getBoard(String fen, Color color) {
         List<List<String>> whiteBoard = Arrays.stream(
                 Pattern.compile("[1-8]")
-                        .matcher(fen.split("\\s")[0])
+                        .matcher(fen.replaceAll("[\\s].*", ""))
                         .replaceAll(mr -> " ".repeat(Integer.parseInt(mr.group()))).split("/"))
                 .map(r -> Arrays.stream(r.split("(?!^)"))
                         .map(CHESS_PIECES::get)

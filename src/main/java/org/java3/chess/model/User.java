@@ -4,8 +4,8 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "players")
-public class Player {
+@Table(name = "users")
+public class User {
 
     @Id
     @GeneratedValue
@@ -24,10 +24,10 @@ public class Player {
     @JoinColumn(name = "to_id")
     private List<Challenge> incomingChallenges;
 
-    public Player() {
+    public User() {
     }
 
-    public Player(String login, String password) {
+    public User(String login, String password) {
         this.login = login;
         this.password = password;
         rating = 1200.0;
@@ -63,5 +63,9 @@ public class Player {
 
     public void setRating(double rating) {
         this.rating = rating;
+    }
+
+    public List<Challenge> getIncomingChallenges() {
+        return incomingChallenges;
     }
 }

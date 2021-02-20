@@ -14,16 +14,16 @@ public class Game {
     private int id;
 
     @ManyToOne
-    @JoinColumn(name = "white_id", nullable = false)
-    private Player white;
+    @JoinColumn(nullable = false)
+    private User white;
 
     @ManyToOne
-    @JoinColumn(name = "black_id", nullable = false)
-    private Player black;
+    @JoinColumn(nullable = false)
+    private User black;
 
     @ManyToOne
     @JoinColumn(name = "player_to_move_id", nullable = false)
-    private Player playerToMove;
+    private User playerToMove;
 
     @Column(nullable = false, length = 100)
     private String fen;
@@ -41,7 +41,7 @@ public class Game {
     public Game() {
     }
 
-    public Game(Player white, Player black) {
+    public Game(User white, User black) {
         this.white = white;
         this.black = black;
         playerToMove = white;
@@ -57,27 +57,27 @@ public class Game {
         this.id = id;
     }
 
-    public Player getWhite() {
+    public User getWhite() {
         return white;
     }
 
-    public void setWhite(Player white) {
+    public void setWhite(User white) {
         this.white = white;
     }
 
-    public Player getBlack() {
+    public User getBlack() {
         return black;
     }
 
-    public void setBlack(Player black) {
+    public void setBlack(User black) {
         this.black = black;
     }
 
-    public Player getPlayerToMove() {
+    public User getPlayerToMove() {
         return playerToMove;
     }
 
-    public void setPlayerToMove(Player playerToMove) {
+    public void setPlayerToMove(User playerToMove) {
         this.playerToMove = playerToMove;
     }
 

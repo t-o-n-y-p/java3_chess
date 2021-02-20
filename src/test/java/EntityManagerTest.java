@@ -1,7 +1,7 @@
 import org.java3.chess.model.Challenge;
 import org.java3.chess.model.Game;
 import org.java3.chess.model.Move;
-import org.java3.chess.model.Player;
+import org.java3.chess.model.User;
 import org.java3.chess.tools.Color;
 import org.junit.Test;
 
@@ -23,12 +23,12 @@ public class EntityManagerTest {
 
         try {
             manager.getTransaction().begin();
-            Player player1 = new Player("test" + System.currentTimeMillis(), "aaa");
+            User player1 = new User("test" + System.currentTimeMillis(), "aaa");
             manager.persist(player1);
             manager.getTransaction().commit();
             sleep(10);
             manager.getTransaction().begin();
-            Player player2 = new Player("test" + System.currentTimeMillis(), "aaa");
+            User player2 = new User("test" + System.currentTimeMillis(), "aaa");
             manager.persist(player2);
             manager.getTransaction().commit();
             manager.getTransaction().begin();

@@ -6,7 +6,6 @@ import javax.persistence.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "challenges")
@@ -17,15 +16,15 @@ public class Challenge {
     private int id;
 
     @ManyToOne
-    @JoinColumn(name = "from_id", nullable = false)
-    private Player from;
+    @JoinColumn(nullable = false)
+    private User from;
 
     @ManyToOne
-    @JoinColumn(name = "to_id", nullable = false)
-    private Player to;
+    @JoinColumn(nullable = false)
+    private User to;
 
-    @Column(nullable = false, length = 5)
-    private String color;
+    @Column(name = "target_color", nullable = false, length = 5)
+    private String targetColor;
 
     @Column(nullable = false)
     private LocalDateTime timestamp;
@@ -33,10 +32,10 @@ public class Challenge {
     public Challenge() {
     }
 
-    public Challenge(Player from, Player to, Color color) {
+    public Challenge(User from, User to, Color targetColor) {
         this.from = from;
         this.to = to;
-        this.color = color.getValue();
+        this.targetColor = targetColor.getValue();
         timestamp = Instant.now().atZone(ZoneId.of("GMT")).toLocalDateTime();
     }
 
@@ -48,28 +47,28 @@ public class Challenge {
         this.id = id;
     }
 
-    public Player getFrom() {
+    public User getFrom() {
         return from;
     }
 
-    public void setFrom(Player from) {
+    public void setFrom(User from) {
         this.from = from;
     }
 
-    public Player getTo() {
+    public User getTo() {
         return to;
     }
 
-    public void setTo(Player to) {
+    public void setTo(User to) {
         this.to = to;
     }
 
-    public String getColor() {
-        return color;
+    public String getTargetColor() {
+        return targetColor;
     }
 
-    public void setColor(String color) {
-        this.color = color;
+    public void setTargetColor(String targetColor) {
+        this.targetColor = targetColor;
     }
 
     public LocalDateTime getTimestamp() {

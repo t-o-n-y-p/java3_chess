@@ -13,7 +13,7 @@ public class Move {
     private int id;
 
     @ManyToOne
-    @JoinColumn(name = "game_id", nullable = false)
+    @JoinColumn(nullable = false)
     private Game game;
 
     @Column(name = "move_number", nullable = false)

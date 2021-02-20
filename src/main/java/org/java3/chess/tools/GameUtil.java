@@ -64,8 +64,12 @@ public final class GameUtil {
         return whiteBoard.stream().peek(Collections::reverse).collect(Collectors.toList());
     }
 
-    public static int getHalfMovesSinceCaptureOrPawnMove(String fen) {
-        return Integer.parseInt(fen.split("\\s")[4]);
+    public static boolean isDrawByInsufficientMaterial(String fen) {
+        return fen.matches("([1-8/]+[KkBbNn]){2,3}[1-8/]+[\\s].*");
+    }
+
+    public static boolean isDrawByFiftyMoveRule(String fen) {
+        return fen.matches(".*[\\s][1-9][0-9]{2,}[\\s][1-9].*");
     }
 
     public static int getNextMoveNumber(String fen) {

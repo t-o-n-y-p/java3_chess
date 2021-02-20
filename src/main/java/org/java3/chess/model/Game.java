@@ -34,6 +34,9 @@ public class Game {
     @Column(length = 1000)
     private String description;
 
+    @Column(name = "legal_moves", nullable = false)
+    private String legalMoves;
+
     @OneToMany
     @JoinColumn(name = "game_id")
     private List<Move> moves;
@@ -46,6 +49,7 @@ public class Game {
         this.black = black;
         playerToMove = white;
         fen = GameUtil.STARTING_POSITION_FEN;
+        legalMoves = GameUtil.STARTING_POSITION_LEGAL_MOVES;
         isCompleted = false;
     }
 
@@ -103,5 +107,13 @@ public class Game {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getLegalMoves() {
+        return legalMoves;
+    }
+
+    public void setLegalMoves(String legalMoves) {
+        this.legalMoves = legalMoves;
     }
 }

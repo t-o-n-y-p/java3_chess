@@ -64,20 +64,24 @@ public final class GameUtil {
         return whiteBoard.stream().peek(Collections::reverse).collect(Collectors.toList());
     }
 
+    public static String getPositionFromFen(String fen) {
+        return Arrays.toString(Arrays.copyOfRange(fen.split("\\s"), 0, 4));
+    }
+
     private static boolean isDrawByInsufficientMaterial(String fen) {
         return fen.matches("([1-8/]*[KkBbNn]){2,3}[1-8/]*[\\s].*");
     }
 
     private static boolean isDrawByFiftyMoveRule(String fen) {
-        return fen.matches(".*[\\s][1-9][0-9]{2,}[\\s][1-9].*");
+        return Integer.parseInt(fen.split("\\s")[4]) >= 100;
     }
 
     private static boolean whiteToMove(String fen) {
-        return fen.matches(".*[w].*");
+        return fen.contains("w");
     }
 
     public static int getNextMoveNumber(String fen) {
-        return Integer.parseInt(fen.split("\\s")[5]);
+        return Integer.parseInt(fen.replaceAll(".*[\\s]", ""));
     }
 
     public static String getLegalMoves(String fen) throws ExecutionException, InterruptedException {
@@ -108,12 +112,16 @@ public final class GameUtil {
         ).get();
     }
 
-    public static Result getResult(String fen, String legalMoves) throws ExecutionException, InterruptedException {
+    public static Result getResult(String fen, String legalMoves, List<String> positionHistory)
+            throws ExecutionException, InterruptedException {
         if (isDrawByInsufficientMaterial(fen)) {
             return Result.DRAW_BY_INSUFFICIENT_MATERIAL;
         }
         if (isDrawByFiftyMoveRule(fen)) {
             return Result.DRAW_BY_FIFTY_MOVE_RULE;
+        }
+        if (Collections.frequency(positionHistory, getPositionFromFen(fen)) >= 2) {
+            return Result.DRAW_BY_REPETITION;
         }
         if (!legalMoves.isBlank()) {
             return Result.UNDEFINED;

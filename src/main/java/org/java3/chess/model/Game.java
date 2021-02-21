@@ -3,7 +3,9 @@ package org.java3.chess.model;
 import org.java3.chess.tools.GameUtil;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "games")
@@ -115,5 +117,14 @@ public class Game {
 
     public void setLegalMoves(String legalMoves) {
         this.legalMoves = legalMoves;
+    }
+
+    public List<String> getPositionHistory() {
+        if (moves == null) {
+            return new ArrayList<>();
+        }
+        return moves.stream()
+                .map(Move::getRepetitionInfo)
+                .collect(Collectors.toList());
     }
 }

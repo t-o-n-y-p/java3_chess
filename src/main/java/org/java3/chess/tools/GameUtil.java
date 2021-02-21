@@ -1,5 +1,6 @@
 package org.java3.chess.tools;
 
+import org.java3.chess.model.User;
 import xyz.niflheim.stockfish.StockfishClient;
 import xyz.niflheim.stockfish.engine.enums.Option;
 import xyz.niflheim.stockfish.engine.enums.Query;
@@ -132,4 +133,21 @@ public final class GameUtil {
         }
         return Result.WHITE_WON_BY_CHECKMATE;
     }
+
+    public static void updateRatings(User white, User black, Result result) {
+        if (result == Result.UNDEFINED) {
+            return;
+        }
+        double actualPointsForWhite = 0.0;
+        if (result.getWinningSide() == Color.WHITE) {
+            actualPointsForWhite = 1.0;
+        } else if (result.getWinningSide() == null) {
+            actualPointsForWhite = 0.5;
+        }
+        double expectedPointsForWhite = 1 / (1 + Math.pow(10.0, (black.getRating() - white.getRating()) / 400));
+        double ratingDifference = 20 * (actualPointsForWhite - expectedPointsForWhite);
+        white.setRating(white.getRating() + ratingDifference);
+        black.setRating(black.getRating() - ratingDifference);
+    }
+
 }

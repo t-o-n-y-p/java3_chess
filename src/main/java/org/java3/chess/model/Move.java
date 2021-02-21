@@ -19,7 +19,7 @@ public class Move {
     @Column(name = "move_number", nullable = false)
     private int moveNumber;
 
-    @Column(nullable = false, length = 4)
+    @Column(nullable = false, length = 5)
     private String value;
 
     public Move() {

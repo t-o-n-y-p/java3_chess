@@ -65,7 +65,7 @@ public final class GameUtil {
     }
 
     private static boolean isDrawByInsufficientMaterial(String fen) {
-        return fen.matches("([1-8/]*[KkBbNn\\s]){3,4}.*");
+        return fen.matches("([1-8/]*[KkBbNn]){2,3}[1-8/]*[\\s].*");
     }
 
     private static boolean isDrawByFiftyMoveRule(String fen) {

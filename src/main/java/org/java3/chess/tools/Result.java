@@ -2,6 +2,7 @@ package org.java3.chess.tools;
 
 public enum Result {
 
+    UNDEFINED("Play continues"),
     WHITE_WON_BY_CHECKMATE("White won by checkmate"),
     WHITE_WON_BY_RESIGNATION("White won by resignation"),
     BLACK_WON_BY_CHECKMATE("Black won by checkmate"),

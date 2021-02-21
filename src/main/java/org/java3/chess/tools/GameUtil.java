@@ -64,35 +64,37 @@ public final class GameUtil {
         return whiteBoard.stream().peek(Collections::reverse).collect(Collectors.toList());
     }
 
-    public static boolean isDrawByInsufficientMaterial(String fen) {
-        return fen.matches("([1-8/]*[KkBbNn]){2,3}[1-8/]*[\\s].*");
+    private static boolean isDrawByInsufficientMaterial(String fen) {
+        return fen.matches("([1-8/]*[KkBbNn\\s]){3,4}.*");
     }
 
-    public static boolean isDrawByFiftyMoveRule(String fen) {
+    private static boolean isDrawByFiftyMoveRule(String fen) {
         return fen.matches(".*[\\s][1-9][0-9]{2,}[\\s][1-9].*");
+    }
+
+    private static boolean whiteToMove(String fen) {
+        return fen.matches(".*[w].*");
     }
 
     public static int getNextMoveNumber(String fen) {
         return Integer.parseInt(fen.split("\\s")[5]);
     }
 
-    @SuppressWarnings("unchecked")
-    public static List<String> getLegalMoves(String fen) throws ExecutionException, InterruptedException {
-        return (List<String>) client.submit(
+    public static String getLegalMoves(String fen) throws ExecutionException, InterruptedException {
+        return (String) client.submit(
                 new Query.Builder(QueryType.Legal_Moves)
                         .setFen(fen)
                         .build(),
-                result -> Arrays.asList(result.split("\\s"))
+                result -> result
         ).get();
     }
 
-    @SuppressWarnings("unchecked")
-    public static List<String> getCheckers(String fen) throws ExecutionException, InterruptedException {
-        return (List<String>) client.submit(
+    public static String getCheckers(String fen) throws ExecutionException, InterruptedException {
+        return (String) client.submit(
                 new Query.Builder(QueryType.Checkers)
                         .setFen(fen)
                         .build(),
-                result -> Arrays.asList(result.split("\\s"))
+                result -> result
         ).get();
     }
 
@@ -104,5 +106,22 @@ public final class GameUtil {
                         .build(),
                 result -> result
         ).get();
+    }
+
+    public static Result getResult(String fen, String legalMoves) throws ExecutionException, InterruptedException {
+        if (isDrawByInsufficientMaterial(fen)) {
+            return Result.DRAW_BY_INSUFFICIENT_MATERIAL;
+        }
+        if (isDrawByFiftyMoveRule(fen)) {
+            return Result.DRAW_BY_FIFTY_MOVE_RULE;
+        }
+        if (!legalMoves.isBlank()) {
+            return Result.UNDEFINED;
+        } else if (getCheckers(fen).isBlank()) {
+            return Result.DRAW_BY_STALEMATE;
+        } else if (whiteToMove(fen)) {
+            return Result.BLACK_WON_BY_CHECKMATE;
+        }
+        return Result.WHITE_WON_BY_CHECKMATE;
     }
 }

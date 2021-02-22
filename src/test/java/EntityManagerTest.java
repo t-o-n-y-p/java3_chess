@@ -18,7 +18,7 @@ public class EntityManagerTest {
 
     @Test
     public void smokeTest() throws InterruptedException {
-        factory = Persistence.createEntityManagerFactory("TestPersistenceUnit");
+        factory = Persistence.createEntityManagerFactory("TestDatabase");
         manager = factory.createEntityManager();
 
         try {

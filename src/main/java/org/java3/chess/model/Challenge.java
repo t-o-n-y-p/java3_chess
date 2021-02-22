@@ -15,12 +15,10 @@ public class Challenge {
     @GeneratedValue
     private int id;
 
-    @ManyToOne
-    @JoinColumn(nullable = false)
+    @ManyToOne(optional = false)
     private User from;
 
-    @ManyToOne
-    @JoinColumn(nullable = false)
+    @ManyToOne(optional = false)
     private User to;
 
     @Column(name = "target_color", nullable = false, length = 5)

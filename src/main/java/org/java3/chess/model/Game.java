@@ -15,16 +15,14 @@ public class Game {
     @GeneratedValue
     private int id;
 
-    @ManyToOne
-    @JoinColumn(nullable = false)
+    @ManyToOne(optional = false)
     private User white;
 
-    @ManyToOne
-    @JoinColumn(nullable = false)
+    @ManyToOne(optional = false)
     private User black;
 
-    @ManyToOne
-    @JoinColumn(name = "player_to_move_id", nullable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "player_to_move_id")
     private User playerToMove;
 
     @Column(nullable = false, length = 100)

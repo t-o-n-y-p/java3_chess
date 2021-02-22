@@ -12,8 +12,7 @@ public class Move {
     @GeneratedValue
     private int id;
 
-    @ManyToOne
-    @JoinColumn(nullable = false)
+    @ManyToOne(optional = false)
     private Game game;
 
     @Column(name = "move_number", nullable = false)

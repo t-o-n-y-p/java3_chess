@@ -2,7 +2,7 @@ import org.java3.chess.model.Challenge;
 import org.java3.chess.model.Game;
 import org.java3.chess.model.Move;
 import org.java3.chess.model.User;
-import org.java3.chess.tools.Color;
+import org.java3.chess.model.Color;
 import org.junit.Test;
 
 import javax.persistence.EntityManager;

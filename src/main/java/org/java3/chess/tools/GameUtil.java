@@ -1,5 +1,6 @@
 package org.java3.chess.tools;
 
+import org.java3.chess.model.Color;
 import org.java3.chess.model.User;
 import xyz.niflheim.stockfish.StockfishClient;
 import xyz.niflheim.stockfish.engine.enums.Option;

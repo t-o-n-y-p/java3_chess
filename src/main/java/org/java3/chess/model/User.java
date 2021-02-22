@@ -20,8 +20,7 @@ public class User {
     @Column(nullable = false, scale = 1)
     private double rating;
 
-    @OneToMany
-    @JoinColumn(name = "to_id")
+    @OneToMany(mappedBy = "to")
     private List<Challenge> incomingChallenges;
 
     public User() {

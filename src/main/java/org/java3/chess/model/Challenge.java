@@ -1,7 +1,5 @@
 package org.java3.chess.model;
 
-import org.java3.chess.tools.Color;
-
 import javax.persistence.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -21,8 +19,8 @@ public class Challenge {
     @ManyToOne(optional = false)
     private User to;
 
-    @Column(name = "target_color", nullable = false, length = 5)
-    private String targetColor;
+    @Column(name = "target_color")
+    private Color targetColor;
 
     @Column(nullable = false)
     private LocalDateTime timestamp;
@@ -33,7 +31,7 @@ public class Challenge {
     public Challenge(User from, User to, Color targetColor) {
         this.from = from;
         this.to = to;
-        this.targetColor = targetColor.getValue();
+        this.targetColor = targetColor;
         timestamp = Instant.now().atZone(ZoneId.of("GMT")).toLocalDateTime();
     }
 
@@ -61,11 +59,11 @@ public class Challenge {
         this.to = to;
     }
 
-    public String getTargetColor() {
+    public Color getTargetColor() {
         return targetColor;
     }
 
-    public void setTargetColor(String targetColor) {
+    public void setTargetColor(Color targetColor) {
         this.targetColor = targetColor;
     }
 

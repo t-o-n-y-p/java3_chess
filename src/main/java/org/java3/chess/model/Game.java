@@ -37,8 +37,7 @@ public class Game {
     @Column(name = "legal_moves", nullable = false)
     private String legalMoves;
 
-    @OneToMany
-    @JoinColumn(name = "game_id")
+    @OneToMany(mappedBy = "game")
     private List<Move> moves;
 
     public Game() {

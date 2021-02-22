@@ -1,5 +1,7 @@
 package org.java3.chess.tools;
 
+import org.java3.chess.model.Color;
+
 public enum Result {
 
     UNDEFINED("Play continues", null),

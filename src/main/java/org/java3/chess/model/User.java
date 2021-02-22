@@ -2,6 +2,7 @@ package org.java3.chess.model;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "users")
@@ -30,6 +31,20 @@ public class User {
         this.login = login;
         this.password = password;
         rating = 1200.0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id && Double.compare(user.rating, rating) == 0
+                && login.equals(user.login) && password.equals(user.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, login, password, rating);
     }
 
     public int getId() {

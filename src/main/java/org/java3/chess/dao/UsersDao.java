@@ -35,10 +35,23 @@ public class UsersDao {
         }
     }
 
-    public List<User> findByRating(double rating, double threshold) {
+    public List<User> findByRating(double rating, double threshold, int offset, int limit) {
         return manager.createQuery("from User where rating >= :start and rating <= :end", User.class)
                 .setParameter("start", rating - threshold)
                 .setParameter("end", rating + threshold)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+    }
+
+    public List<User> findByRatingAndLoginInput(String input, double rating, double threshold, int offset, int limit) {
+        return manager.createQuery("from User where login like concat('%', :input, '%') " +
+                "and rating >= :start and rating <= :end", User.class)
+                .setParameter("input", input)
+                .setParameter("start", rating - threshold)
+                .setParameter("end", rating + threshold)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
                 .getResultList();
     }
 

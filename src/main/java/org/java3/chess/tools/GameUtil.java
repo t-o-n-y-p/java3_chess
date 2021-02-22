@@ -62,10 +62,6 @@ public final class GameUtil {
         return fen.contains("w");
     }
 
-    public static int getNextMoveNumber(String fen) {
-        return Integer.parseInt(fen.replaceAll(".*[\\s]", ""));
-    }
-
     public static Result getResult(String fen, String legalMoves, List<String> positionHistory)
             throws ExecutionException, InterruptedException {
         if (isDrawByInsufficientMaterial(fen)) {

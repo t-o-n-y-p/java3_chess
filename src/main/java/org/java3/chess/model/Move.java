@@ -15,9 +15,6 @@ public class Move {
     @ManyToOne(optional = false)
     private Game game;
 
-    @Column(name = "move_number", nullable = false)
-    private int moveNumber;
-
     @Column(nullable = false, length = 5)
     private String value;
 
@@ -31,7 +28,6 @@ public class Move {
         this.game = game;
         this.value = value;
         repetitionInfo = GameUtil.getPositionFromFen(game.getFen());
-        moveNumber = GameUtil.getNextMoveNumber(game.getFen());
     }
 
     public int getId() {
@@ -48,14 +44,6 @@ public class Move {
 
     public void setGame(Game game) {
         this.game = game;
-    }
-
-    public int getMoveNumber() {
-        return moveNumber;
-    }
-
-    public void setMoveNumber(int moveNumber) {
-        this.moveNumber = moveNumber;
     }
 
     public String getValue() {

@@ -1,8 +1,8 @@
 package org.java3.chess.dao;
 
 import org.java3.chess.model.User;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.persistence.EntityManager;
@@ -17,13 +17,17 @@ import static org.junit.Assert.*;
 
 public class UsersDaoTest {
 
-    private EntityManagerFactory factory;
-    private EntityManager manager;
-    private UsersDao usersDao;
-    private final List<User> allCreatedUsers = new ArrayList<>();
+    private static EntityManagerFactory factory;
+    private static EntityManager manager;
+    private static UsersDao usersDao;
+    private static final List<User> allCreatedUsers = new ArrayList<>();
+    private static User lowRatedUser;
+    private static User midRatedUser1;
+    private static User midRatedUser2;
+    private static User highRatedUser;
 
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void setUp() {
         factory = Persistence.createEntityManagerFactory("TestDatabase");
         manager = factory.createEntityManager();
         usersDao = new UsersDao(manager);
@@ -37,11 +41,27 @@ public class UsersDaoTest {
                 manager.persist(user);
             }
         }
+        lowRatedUser = new User("login120", "qwerty");
+        lowRatedUser.setRating(0);
+        manager.persist(lowRatedUser);
+        midRatedUser1 = new User("test121", "qwerty");
+        midRatedUser1.setRating(1680);
+        manager.persist(midRatedUser1);
+        midRatedUser2 = new User("login121", "qwerty");
+        midRatedUser2.setRating(1920);
+        manager.persist(midRatedUser2);
+        highRatedUser = new User("test120", "qwerty");
+        highRatedUser.setRating(5000);
+        manager.persist(highRatedUser);
+        allCreatedUsers.add(lowRatedUser);
+        allCreatedUsers.add(midRatedUser1);
+        allCreatedUsers.add(midRatedUser2);
+        allCreatedUsers.add(highRatedUser);
         manager.getTransaction().commit();
     }
 
-    @After
-    public void tearDown() {
+    @AfterClass
+    public static void tearDown() {
         if (manager != null) {
             manager.close();
         }
@@ -71,105 +91,127 @@ public class UsersDaoTest {
     }
 
     @Test
-    public void findByRating() {
-        assertTrue(usersDao.findByRating(3000, 50, 0, 1000).isEmpty());
-        assertTrue(usersDao.findByRating(800, 50, 0, 1000).isEmpty());
+    public void findOpponentsByRating() {
+        assertTrue(usersDao.findOpponentsByRating(highRatedUser, 5000, 50, 0, 1000).isEmpty());
+        assertTrue(usersDao.findOpponentsByRating(lowRatedUser, 0, 50, 0, 1000).isEmpty());
 
-        List<User> result = usersDao.findByRating(3000, 400, 0, 1000);
-        assertFalse(result.isEmpty());
-        List<User> expectedUsers = allCreatedUsers.stream()
+        List<User> actualResult = usersDao.findOpponentsByRating(highRatedUser, 3000, 400, 0, 1000);
+        List<User> expectedResult = allCreatedUsers.stream()
                 .filter(u -> u.getRating() >= 2600 && u.getRating() <= 3400)
                 .collect(Collectors.toList());
-        assertEquals(expectedUsers.size(), result.size());
-        assertTrue(result.containsAll(expectedUsers));
-        result = usersDao.findByRating(800, 400, 0, 1000);
-        assertFalse(result.isEmpty());
-        expectedUsers = allCreatedUsers.stream()
+        assertEquals(expectedResult.size(), actualResult.size());
+        assertTrue(actualResult.containsAll(expectedResult));
+        actualResult = usersDao.findOpponentsByRating(lowRatedUser, 800, 400, 0, 1000);
+        expectedResult = allCreatedUsers.stream()
                 .filter(u -> u.getRating() >= 400 && u.getRating() <= 1200)
                 .collect(Collectors.toList());
-        assertEquals(expectedUsers.size(), result.size());
-        assertTrue(result.containsAll(expectedUsers));
-        result = usersDao.findByRating(1900, 50, 0, 1000);
-        assertFalse(result.isEmpty());
-        expectedUsers = allCreatedUsers.stream()
-                .filter(u -> u.getRating() >= 1850 && u.getRating() <= 1950)
+        assertEquals(expectedResult.size(), actualResult.size());
+        assertTrue(actualResult.containsAll(expectedResult));
+        actualResult = usersDao.findOpponentsByRating(midRatedUser2, 1900, 50, 0, 1000);
+        expectedResult = allCreatedUsers.stream()
+                .filter(u -> u.getRating() >= 1850 && u.getRating() <= 1950 && !u.equals(midRatedUser2))
                 .collect(Collectors.toList());
-        assertEquals(expectedUsers.size(), result.size());
-        assertTrue(result.containsAll(expectedUsers));
-        result = usersDao.findByRating(1900, 400, 0, 1000);
-        assertFalse(result.isEmpty());
-        expectedUsers = allCreatedUsers.stream()
-                .filter(u -> u.getRating() >= 1500 && u.getRating() <= 2300)
+        assertEquals(expectedResult.size(), actualResult.size());
+        assertTrue(actualResult.containsAll(expectedResult));
+        actualResult = usersDao.findOpponentsByRating(midRatedUser1, 1900, 400, 0, 1000);
+        expectedResult = allCreatedUsers.stream()
+                .filter(u -> u.getRating() >= 1500 && u.getRating() <= 2300 && !u.equals(midRatedUser1))
                 .collect(Collectors.toList());
-        assertEquals(expectedUsers.size(), result.size());
-        assertTrue(result.containsAll(expectedUsers));
+        assertEquals(expectedResult.size(), actualResult.size());
+        assertTrue(actualResult.containsAll(expectedResult));
 
-        List<User> result1 = usersDao.findByRating(1900, 400, 0, 10);
+        List<User> result1 = usersDao.findOpponentsByRating(midRatedUser1, 1900, 400, 0, 10);
         assertEquals(10, result1.size());
-        List<User> result2 = usersDao.findByRating(1900, 400, 40, 10);
+        List<User> result2 = usersDao.findOpponentsByRating(midRatedUser1, 1900, 400, 40, 10);
         assertEquals(10, result2.size());
         result1.retainAll(result2);
         assertTrue(result1.isEmpty());
 
-        assertTrue(usersDao.findByRating(1900, 400, 1000, 10).isEmpty());
+        assertTrue(usersDao.findOpponentsByRating(midRatedUser1, 1900, 400, 1000, 10).isEmpty());
 
-        result1 = usersDao.findByRating(1900, 400, 0, 20);
+        result1 = usersDao.findOpponentsByRating(midRatedUser2, 1900, 400, 0, 20);
         assertEquals(20, result1.size());
-        result2 = usersDao.findByRating(1900, 400, 100, 20);
-        assertEquals(6, result2.size());
+        result2 = usersDao.findOpponentsByRating(midRatedUser2, 1900, 400, 100, 20);
+        assertEquals(7, result2.size());
         result1.retainAll(result2);
         assertTrue(result1.isEmpty());
     }
 
     @Test
-    public void findByRatingAndLoginInput() {
-        assertTrue(usersDao.findByRatingAndLoginInput("login", 3000, 50, 0, 100).isEmpty());
-        assertTrue(usersDao.findByRatingAndLoginInput("login", 800, 50, 0, 100).isEmpty());
-        assertTrue(usersDao.findByRatingAndLoginInput("login_test", 1900, 50, 0, 100).isEmpty());
+    public void findOpponentsByRatingAndLoginInput() {
+        assertTrue(usersDao.findOpponentsByRatingAndLoginInput(
+                highRatedUser, "login", 3000, 50, 0, 1000
+        ).isEmpty());
+        assertTrue(usersDao.findOpponentsByRatingAndLoginInput(
+                lowRatedUser, "login", 800, 50, 0, 1000
+        ).isEmpty());
+        assertTrue(usersDao.findOpponentsByRatingAndLoginInput(
+                midRatedUser2, "login_test", 1900, 50, 0, 1000
+        ).isEmpty());
 
         for (String input : List.of("login", "test")) {
-            List<User> result = usersDao.findByRatingAndLoginInput(input, 3000, 400, 0, 100);
-            assertFalse(result.isEmpty());
-            List<User> expectedUsers = allCreatedUsers.stream()
+            List<User> actualResult = usersDao.findOpponentsByRatingAndLoginInput(
+                    highRatedUser, input, 3000, 400, 0, 1000
+            );
+            List<User> expectedResult = allCreatedUsers.stream()
                     .filter(u -> u.getRating() >= 2600 && u.getRating() <= 3400 && u.getLogin().contains(input))
                     .collect(Collectors.toList());
-            assertEquals(expectedUsers.size(), result.size());
-            assertTrue(result.containsAll(expectedUsers));
-            result = usersDao.findByRatingAndLoginInput(input, 800, 400, 0, 100);
-            assertFalse(result.isEmpty());
-            expectedUsers = allCreatedUsers.stream()
+            assertEquals(expectedResult.size(), actualResult.size());
+            assertTrue(actualResult.containsAll(expectedResult));
+            actualResult = usersDao.findOpponentsByRatingAndLoginInput(
+                    lowRatedUser, input, 800, 400, 0, 1000
+            );
+            expectedResult = allCreatedUsers.stream()
                     .filter(u -> u.getRating() >= 400 && u.getRating() <= 1200 && u.getLogin().contains(input))
                     .collect(Collectors.toList());
-            assertEquals(expectedUsers.size(), result.size());
-            assertTrue(result.containsAll(expectedUsers));
-            result = usersDao.findByRatingAndLoginInput(input, 1900, 50, 0, 100);
-            assertFalse(result.isEmpty());
-            expectedUsers = allCreatedUsers.stream()
-                    .filter(u -> u.getRating() >= 1850 && u.getRating() <= 1950 && u.getLogin().contains(input))
+            assertEquals(expectedResult.size(), actualResult.size());
+            assertTrue(actualResult.containsAll(expectedResult));
+            actualResult = usersDao.findOpponentsByRatingAndLoginInput(
+                    midRatedUser2, input, 1900, 50, 0, 1000
+            );
+            expectedResult = allCreatedUsers.stream()
+                    .filter(u -> u.getRating() >= 1850 && u.getRating() <= 1950
+                            && u.getLogin().contains(input) && !u.equals(midRatedUser2))
                     .collect(Collectors.toList());
-            assertEquals(expectedUsers.size(), result.size());
-            assertTrue(result.containsAll(expectedUsers));
-            result = usersDao.findByRatingAndLoginInput(input, 1900, 400, 0, 100);
-            assertFalse(result.isEmpty());
-            expectedUsers = allCreatedUsers.stream()
-                    .filter(u -> u.getRating() >= 1500 && u.getRating() <= 2300 && u.getLogin().contains(input))
+            assertEquals(expectedResult.size(), actualResult.size());
+            assertTrue(actualResult.containsAll(expectedResult));
+            actualResult = usersDao.findOpponentsByRatingAndLoginInput(
+                    midRatedUser1, input, 1900, 400, 0, 1000
+            );
+            expectedResult = allCreatedUsers.stream()
+                    .filter(u -> u.getRating() >= 1500 && u.getRating() <= 2300
+                            && u.getLogin().contains(input) && !u.equals(midRatedUser1))
                     .collect(Collectors.toList());
-            assertEquals(expectedUsers.size(), result.size());
-            assertTrue(result.containsAll(expectedUsers));
+            assertEquals(expectedResult.size(), actualResult.size());
+            assertTrue(actualResult.containsAll(expectedResult));
 
-            List<User> result1 = usersDao.findByRatingAndLoginInput(input, 1900, 400, 0, 10);
+            List<User> result1 = usersDao.findOpponentsByRatingAndLoginInput(
+                    midRatedUser1, input, 1900, 400, 0, 10
+            );
             assertEquals(10, result1.size());
-            List<User> result2 = usersDao.findByRatingAndLoginInput(input, 1900, 400, 40, 10);
+            List<User> result2 = usersDao.findOpponentsByRatingAndLoginInput(
+                    midRatedUser1, input, 1900, 400, 40, 10
+            );
             assertEquals(10, result2.size());
             result1.retainAll(result2);
             assertTrue(result1.isEmpty());
 
-            assertTrue(usersDao.findByRatingAndLoginInput(input, 1900, 400, 1000, 10).isEmpty());
+            assertTrue(usersDao.findOpponentsByRatingAndLoginInput(
+                    midRatedUser1, input, 1900, 400, 1000, 10
+            ).isEmpty());
 
-            result1 = usersDao.findByRatingAndLoginInput(input, 1900, 400, 0, 20);
+            result1 = usersDao.findOpponentsByRatingAndLoginInput(
+                    midRatedUser2, input, 1900, 400, 0, 20
+            );
             assertEquals(20, result1.size());
-            result2 = usersDao.findByRatingAndLoginInput(input, 1900, 400, 40, 20);
-            assertEquals(13, result2.size());
+            result2 = usersDao.findOpponentsByRatingAndLoginInput(
+                    midRatedUser2, input, 1900, 400, 40, 20
+            );
+            if (midRatedUser2.getLogin().contains(input)) {
+                assertEquals(13, result2.size());
+            } else {
+                assertEquals(14, result2.size());
+            }
             result1.retainAll(result2);
             assertTrue(result1.isEmpty());
         }

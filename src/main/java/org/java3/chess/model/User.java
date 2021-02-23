@@ -1,7 +1,6 @@
 package org.java3.chess.model;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -20,9 +19,6 @@ public class User {
 
     @Column(nullable = false, scale = 1)
     private double rating;
-
-    @OneToMany(mappedBy = "to")
-    private List<Challenge> incomingChallenges;
 
     public User() {
     }
@@ -77,9 +73,5 @@ public class User {
 
     public void setRating(double rating) {
         this.rating = rating;
-    }
-
-    public List<Challenge> getIncomingChallenges() {
-        return incomingChallenges;
     }
 }

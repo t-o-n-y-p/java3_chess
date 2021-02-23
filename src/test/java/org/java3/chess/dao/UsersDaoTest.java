@@ -9,6 +9,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 public class UsersDaoTest {
@@ -64,11 +66,37 @@ public class UsersDaoTest {
 
     @Test
     public void findByRating() {
-//        assertTrue(usersDao.findByRating(3000, 50, 0, 100).isEmpty());
-//        assertTrue(usersDao.findByRating(800, 50, 0, 100).isEmpty());
-//        assertFalse(usersDao.findByRating(3000, 400, 0, 100).isEmpty());
-//        assertFalse(usersDao.findByRating(800, 400, 0, 100).isEmpty());
-//        assertFalse(usersDao.findByRating(1900, 50, 0, 100).isEmpty());
+        assertTrue(usersDao.findByRating(3000, 50, 0, 100).isEmpty());
+        assertTrue(usersDao.findByRating(800, 50, 0, 100).isEmpty());
+
+        assertFalse(usersDao.findByRating(3000, 400, 0, 100).isEmpty());
+        for (User c : usersDao.findByRating(3000, 400, 0, 100)) {
+            assertTrue(c.getRating() >= 2600 && c.getRating() <= 3400);
+        }
+        assertFalse(usersDao.findByRating(800, 400, 0, 100).isEmpty());
+        for (User c : usersDao.findByRating(800, 400, 0, 100)) {
+            assertTrue(c.getRating() >= 400 && c.getRating() <= 1200);
+        }
+        assertFalse(usersDao.findByRating(1900, 50, 0, 100).isEmpty());
+        for (User c : usersDao.findByRating(1900, 50, 0, 100)) {
+            assertTrue(c.getRating() >= 1850 && c.getRating() <= 1950);
+        }
+
+        List<User> result1 = usersDao.findByRating(1900, 400, 0, 10);
+        assertEquals(10, result1.size());
+        List<User> result2 = usersDao.findByRating(1900, 400, 40, 10);
+        assertEquals(10, result2.size());
+        result1.retainAll(result2);
+        assertTrue(result1.isEmpty());
+
+        assertTrue(usersDao.findByRating(1900, 400, 1000, 10).isEmpty());
+
+        result1 = usersDao.findByRating(1900, 400, 0, 20);
+        assertEquals(20, result1.size());
+        result2 = usersDao.findByRating(1900, 400, 40, 20);
+        assertEquals(13, result2.size());
+        result1.retainAll(result2);
+        assertTrue(result1.isEmpty());
     }
 
     @Test

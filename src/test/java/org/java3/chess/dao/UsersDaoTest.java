@@ -44,14 +44,31 @@ public class UsersDaoTest {
 
     @Test
     public void findByLogin() {
+        assertNull(usersDao.findByLogin("non existing user"));
+
+        User found = usersDao.findByLogin("login100");
+        assertNotNull(found);
+        assertEquals("login100", found.getLogin());
     }
 
     @Test
     public void findByLoginAndPassword() {
+        assertNull(usersDao.findByLoginAndPassword("some user", "password23"));
+        assertNull(usersDao.findByLoginAndPassword("login56", "pass56"));
+
+        User found = usersDao.findByLoginAndPassword("login82", "password82");
+        assertNotNull(found);
+        assertEquals("login82", found.getLogin());
+        assertEquals("password82", found.getPassword());
     }
 
     @Test
     public void findByRating() {
+//        assertTrue(usersDao.findByRating(3000, 50, 0, 100).isEmpty());
+//        assertTrue(usersDao.findByRating(800, 50, 0, 100).isEmpty());
+//        assertFalse(usersDao.findByRating(3000, 400, 0, 100).isEmpty());
+//        assertFalse(usersDao.findByRating(800, 400, 0, 100).isEmpty());
+//        assertFalse(usersDao.findByRating(1900, 50, 0, 100).isEmpty());
     }
 
     @Test

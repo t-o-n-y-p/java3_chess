@@ -27,7 +27,7 @@ public class UsersDaoTest {
     private static User highRatedUser;
 
     @BeforeClass
-    public static void setUp() {
+    public static void beforeClass() {
         factory = Persistence.createEntityManagerFactory("TestDatabase");
         manager = factory.createEntityManager();
         usersDao = new UsersDao(manager);
@@ -61,7 +61,7 @@ public class UsersDaoTest {
     }
 
     @AfterClass
-    public static void tearDown() {
+    public static void afterClass() {
         if (manager != null) {
             manager.close();
         }

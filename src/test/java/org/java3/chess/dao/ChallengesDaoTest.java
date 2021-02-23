@@ -27,7 +27,7 @@ public class ChallengesDaoTest {
     private static final List<Challenge> allCreatedChallenges = new ArrayList<>();
 
     @BeforeClass
-    public static void setUp() throws InterruptedException {
+    public static void beforeClass() throws InterruptedException {
         factory = Persistence.createEntityManagerFactory("TestDatabase");
         manager = factory.createEntityManager();
         challengesDao = new ChallengesDao(manager);
@@ -36,7 +36,6 @@ public class ChallengesDaoTest {
         for (int i = 0; i < 12; i++) {
             for (String prefix : List.of("login", "test")) {
                 User user = new User(prefix + i, "password" + i);
-                user.setRating(2800 - i * 15);
                 allCreatedUsers.add(user);
                 manager.persist(user);
             }
@@ -61,7 +60,7 @@ public class ChallengesDaoTest {
     }
 
     @AfterClass
-    public static void tearDown() {
+    public static void afterClass() {
         if (manager != null) {
             manager.close();
         }

@@ -106,12 +106,12 @@ public class GamesDaoTest {
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     public void findByUser() {
         User noGames = allCreatedUsers.stream()
-                .filter(u -> u.getLogin().matches("[^\\d]+[1][0-1]"))
+                .filter(u -> u.getLogin().matches("[^\\d]+[1][0-1]$"))
                 .findAny()
                 .get();
         assertTrue(gamesDao.findByUser(noGames, 0, 1000).isEmpty());
 
-        for (String regex : List.of("[^\\d]+[0-4]", "[^\\d]+[5-7]", "[^\\d]+[8-9]")) {
+        for (String regex : List.of("[^\\d]+[0-4]$", "[^\\d]+[5-7]$", "[^\\d]+[8-9]$")) {
             User player = allCreatedUsers.stream()
                     .filter(u -> u.getLogin().matches(regex))
                     .findAny()
@@ -127,7 +127,7 @@ public class GamesDaoTest {
         }
 
         User player = allCreatedUsers.stream()
-                .filter(u -> u.getLogin().matches("[^\\d]+[0-4]"))
+                .filter(u -> u.getLogin().matches("[^\\d]+[0-4]$"))
                 .findAny()
                 .get();
         List<Game> result1 = gamesDao.findByUser(player, 0, 10);
@@ -136,6 +136,9 @@ public class GamesDaoTest {
         assertEquals(10, result2.size());
         result1.retainAll(result2);
         assertTrue(result1.isEmpty());
+
+        assertTrue(gamesDao.findByUser(player, 1000, 10).isEmpty());
+
         result1 = gamesDao.findByUser(player, 0, 25);
         assertEquals(25, result1.size());
         result2 = gamesDao.findByUser(player, 75, 25);
@@ -146,6 +149,55 @@ public class GamesDaoTest {
     }
 
     @Test
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     public void findByUserAndOpponentLoginInput() {
+        User noGames = allCreatedUsers.stream()
+                .filter(u -> u.getLogin().matches("[^\\d]+[1][0-1]$"))
+                .findAny()
+                .get();
+        assertTrue(gamesDao.findByUserAndOpponentLoginInput(noGames, "login", 0, 1000).isEmpty());
+        User playerNegative = allCreatedUsers.stream()
+                .filter(u -> u.getLogin().matches("[^\\d]+[0-4]$"))
+                .findAny()
+                .get();
+        assertTrue(gamesDao.findByUserAndOpponentLoginInput(playerNegative, "login_test", 0, 1000).isEmpty());
+
+        for (String regex : List.of("login[0-4]$", "login[5-7]$", "login[8-9]$", "test[0-4]$", "test[5-7]$", "test[8-9]$")) {
+            for (String input : List.of("login", "test")) {
+                User player = allCreatedUsers.stream()
+                        .filter(u -> u.getLogin().matches(regex))
+                        .findAny()
+                        .get();
+                List<Game> actualResult = gamesDao.findByUserAndOpponentLoginInput(player, input, 0, 1000);
+                List<Game> expectedResult = allCreatedGames.stream()
+                        .filter(g -> (g.getWhite().equals(player) && g.getBlack().getLogin().contains(input))
+                                || (g.getBlack().equals(player) && g.getWhite().getLogin().contains(input)))
+                        .sorted(Comparator.comparing(Game::isCompleted)
+                                .thenComparing(g -> !g.getPlayerToMove().equals(player) && !g.isCompleted())
+                                .thenComparing(Comparator.comparing(Game::getLastModifiedTimestamp).reversed()))
+                        .collect(Collectors.toList());
+                assertEquals(expectedResult, actualResult);
+            }
+        }
+
+        User player = allCreatedUsers.stream()
+                .filter(u -> u.getLogin().matches("login[0-4]$"))
+                .findAny()
+                .get();
+        List<Game> result1 = gamesDao.findByUserAndOpponentLoginInput(player, "test", 0, 5);
+        assertEquals(5, result1.size());
+        List<Game> result2 = gamesDao.findByUserAndOpponentLoginInput(player, "test", 20, 5);
+        assertEquals(5, result2.size());
+        result1.retainAll(result2);
+        assertTrue(result1.isEmpty());
+
+        assertTrue(gamesDao.findByUserAndOpponentLoginInput(player, "test", 1000, 10).isEmpty());
+
+        result1 = gamesDao.findByUserAndOpponentLoginInput(player, "test", 0, 12);
+        assertEquals(12, result1.size());
+        result2 = gamesDao.findByUserAndOpponentLoginInput(player, "test", 48, 12);
+        assertEquals(3, result2.size());
+        result1.retainAll(result2);
+        assertTrue(result1.isEmpty());
     }
 }

@@ -187,37 +187,34 @@ public class UsersDaoTest {
                     .sorted(Comparator.comparing(User::getRating).reversed())
                     .collect(Collectors.toList());
             assertEquals(expectedResult, actualResult);
-
-            List<User> result1 = usersDao.findOpponentsByRatingAndLoginInput(
-                    midRatedUser1, input, 1900, 400, 0, 10
-            );
-            assertEquals(10, result1.size());
-            List<User> result2 = usersDao.findOpponentsByRatingAndLoginInput(
-                    midRatedUser1, input, 1900, 400, 40, 10
-            );
-            assertEquals(10, result2.size());
-            result1.retainAll(result2);
-            assertTrue(result1.isEmpty());
-
-            assertTrue(usersDao.findOpponentsByRatingAndLoginInput(
-                    midRatedUser1, input, 1900, 400, 1000, 10
-            ).isEmpty());
-
-            result1 = usersDao.findOpponentsByRatingAndLoginInput(
-                    midRatedUser2, input, 1900, 400, 0, 20
-            );
-            assertEquals(20, result1.size());
-            result2 = usersDao.findOpponentsByRatingAndLoginInput(
-                    midRatedUser2, input, 1900, 400, 40, 20
-            );
-            if (midRatedUser2.getLogin().contains(input)) {
-                assertEquals(13, result2.size());
-            } else {
-                assertEquals(15, result2.size());
-            }
-            result1.retainAll(result2);
-            assertTrue(result1.isEmpty());
         }
+
+        List<User> result1 = usersDao.findOpponentsByRatingAndLoginInput(
+                midRatedUser1, "login", 1900, 400, 0, 10
+        );
+        assertEquals(10, result1.size());
+        List<User> result2 = usersDao.findOpponentsByRatingAndLoginInput(
+                midRatedUser1, "login", 1900, 400, 40, 10
+        );
+        assertEquals(10, result2.size());
+        result1.retainAll(result2);
+        assertTrue(result1.isEmpty());
+
+        assertTrue(usersDao.findOpponentsByRatingAndLoginInput(
+                midRatedUser1, "login", 1900, 400, 1000, 10
+        ).isEmpty());
+
+        result1 = usersDao.findOpponentsByRatingAndLoginInput(
+                midRatedUser2, "login", 1900, 400, 0, 20
+        );
+        assertEquals(20, result1.size());
+        result2 = usersDao.findOpponentsByRatingAndLoginInput(
+                midRatedUser2, "login", 1900, 400, 40, 20
+        );
+
+        assertEquals(13, result2.size());
+        result1.retainAll(result2);
+        assertTrue(result1.isEmpty());
 
     }
 }

@@ -73,13 +73,13 @@ public class ChallengesDaoTest {
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     public void findIncomingChallenges() {
         User noChallenges = allCreatedUsers.stream()
-                .filter(u -> u.getLogin().matches("[^\\d]+[1][0-1]"))
+                .filter(u -> u.getLogin().matches("[^\\d]+[1][0-1]$"))
                 .findAny()
                 .get();
         assertTrue(challengesDao.findIncomingChallenges(noChallenges, 0, 1000).isEmpty());
 
         User to = allCreatedUsers.stream()
-                .filter(u -> !u.getLogin().matches("[^\\d]+[1][0-1]"))
+                .filter(u -> !u.getLogin().matches("[^\\d]+[1][0-1]$"))
                 .findAny()
                 .get();
         List<Challenge> actualResult = challengesDao.findIncomingChallenges(to, 0, 1000);
@@ -110,7 +110,7 @@ public class ChallengesDaoTest {
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     public void findIncomingChallengesByOpponentLoginInput() {
         User noChallenges = allCreatedUsers.stream()
-                .filter(u -> u.getLogin().matches("[^\\d]+[1][0-1]"))
+                .filter(u -> u.getLogin().matches("[^\\d]+[1][0-1]$"))
                 .findAny()
                 .get();
         assertTrue(
@@ -118,7 +118,7 @@ public class ChallengesDaoTest {
                         .isEmpty()
         );
         User toNegative = allCreatedUsers.stream()
-                .filter(u -> !u.getLogin().matches("[^\\d]+[1][0-1]"))
+                .filter(u -> !u.getLogin().matches("[^\\d]+[1][0-1]$"))
                 .findAny()
                 .get();
         assertTrue(
@@ -127,35 +127,41 @@ public class ChallengesDaoTest {
         );
 
         for (String input: List.of("login", "test")) {
-            User to = allCreatedUsers.stream()
-                    .filter(u -> !u.getLogin().matches("[^\\d]+[1][0-1]") && !u.getLogin().contains(input))
-                    .findAny()
-                    .get();
-            List<Challenge> actualResult = challengesDao.findIncomingChallengesByOpponentLoginInput(
-                    to, input, 0, 1000
-            );
-            List<Challenge> expectedResult = allCreatedChallenges.stream()
-                    .filter(c -> c.getTo().equals(to) && c.getFrom().getLogin().contains(input))
-                    .sorted(Comparator.comparing(Challenge::getTimestamp).reversed())
-                    .collect(Collectors.toList());
-            assertEquals(expectedResult, actualResult);
-
-            List<Challenge> result1 = challengesDao.findIncomingChallengesByOpponentLoginInput(to, input, 0, 3);
-            assertEquals(3, result1.size());
-            List<Challenge> result2 = challengesDao.findIncomingChallengesByOpponentLoginInput(to, input, 6, 3);
-            assertEquals(3, result2.size());
-            result1.retainAll(result2);
-            assertTrue(result1.isEmpty());
-
-            assertTrue(challengesDao.findIncomingChallengesByOpponentLoginInput(to, input, 1000, 10).isEmpty());
-
-            result1 = challengesDao.findIncomingChallengesByOpponentLoginInput(to, input, 0, 5);
-            assertEquals(5, result1.size());
-            result2 = challengesDao.findIncomingChallengesByOpponentLoginInput(to, input, 10, 5);
-            assertEquals(2, result2.size());
-            result1.retainAll(result2);
-            assertTrue(result1.isEmpty());
+            for (String toLogin : List.of("login", "test")) {
+                User to = allCreatedUsers.stream()
+                        .filter(u -> u.getLogin().matches(toLogin + "[0-9]$"))
+                        .findAny()
+                        .get();
+                List<Challenge> actualResult = challengesDao.findIncomingChallengesByOpponentLoginInput(
+                        to, input, 0, 1000
+                );
+                List<Challenge> expectedResult = allCreatedChallenges.stream()
+                        .filter(c -> c.getTo().equals(to) && c.getFrom().getLogin().contains(input))
+                        .sorted(Comparator.comparing(Challenge::getTimestamp).reversed())
+                        .collect(Collectors.toList());
+                assertEquals(expectedResult, actualResult);
+            }
         }
+
+        User to = allCreatedUsers.stream()
+                .filter(u -> u.getLogin().matches("login[0-9]$"))
+                .findAny()
+                .get();
+        List<Challenge> result1 = challengesDao.findIncomingChallengesByOpponentLoginInput(to, "test", 0, 3);
+        assertEquals(3, result1.size());
+        List<Challenge> result2 = challengesDao.findIncomingChallengesByOpponentLoginInput(to, "test", 6, 3);
+        assertEquals(3, result2.size());
+        result1.retainAll(result2);
+        assertTrue(result1.isEmpty());
+
+        assertTrue(challengesDao.findIncomingChallengesByOpponentLoginInput(to, "test", 1000, 10).isEmpty());
+
+        result1 = challengesDao.findIncomingChallengesByOpponentLoginInput(to, "test", 0, 5);
+        assertEquals(5, result1.size());
+        result2 = challengesDao.findIncomingChallengesByOpponentLoginInput(to, "test", 10, 5);
+        assertEquals(2, result2.size());
+        result1.retainAll(result2);
+        assertTrue(result1.isEmpty());
 
     }
 }

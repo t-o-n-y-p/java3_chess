@@ -34,7 +34,8 @@ public final class GameUtil {
         List<List<String>> whiteBoard = Arrays.stream(
                 Pattern.compile("[1-8]")
                         .matcher(fen.replaceAll("[\\s].*", ""))
-                        .replaceAll(mr -> " ".repeat(Integer.parseInt(mr.group()))).split("/"))
+                        .replaceAll(mr -> " ".repeat(Integer.parseInt(mr.group())))
+                        .split("/"))
                 .map(r -> Arrays.stream(r.split("(?!^)"))
                         .map(CHESS_PIECES::get)
                         .collect(Collectors.toList()))
@@ -66,14 +67,11 @@ public final class GameUtil {
             throws ExecutionException, InterruptedException {
         if (isDrawByInsufficientMaterial(fen)) {
             return Result.DRAW_BY_INSUFFICIENT_MATERIAL;
-        }
-        if (isDrawByFiftyMoveRule(fen)) {
+        } else if (isDrawByFiftyMoveRule(fen)) {
             return Result.DRAW_BY_FIFTY_MOVE_RULE;
-        }
-        if (Collections.frequency(positionHistory, getPositionFromFen(fen)) >= 2) {
+        } else if (Collections.frequency(positionHistory, getPositionFromFen(fen)) >= 2) {
             return Result.DRAW_BY_REPETITION;
-        }
-        if (!legalMoves.isBlank()) {
+        } else if (!legalMoves.isBlank()) {
             return Result.UNDEFINED;
         } else if (StockfishUtil.getCheckers(fen).isBlank()) {
             return Result.DRAW_BY_STALEMATE;

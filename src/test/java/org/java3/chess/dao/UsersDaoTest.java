@@ -211,7 +211,6 @@ public class UsersDaoTest {
         result2 = usersDao.findOpponentsByRatingAndLoginInput(
                 midRatedUser2, "login", 1900, 400, 40, 20
         );
-
         assertEquals(13, result2.size());
         result1.retainAll(result2);
         assertTrue(result1.isEmpty());

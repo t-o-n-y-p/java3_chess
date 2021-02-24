@@ -113,17 +113,17 @@ public class ChallengesDaoTest {
                 .filter(u -> u.getLogin().matches("[^\\d]+[1][0-1]$"))
                 .findAny()
                 .get();
-        assertTrue(
-                challengesDao.findIncomingChallengesByOpponentLoginInput(noChallenges, "login",  0, 1000)
-                        .isEmpty()
+        assertTrue(challengesDao
+                .findIncomingChallengesByOpponentLoginInput(noChallenges, "login",  0, 1000)
+                .isEmpty()
         );
         User toNegative = allCreatedUsers.stream()
                 .filter(u -> !u.getLogin().matches("[^\\d]+[1][0-1]$"))
                 .findAny()
                 .get();
-        assertTrue(
-                challengesDao.findIncomingChallengesByOpponentLoginInput(toNegative, "login_test",  0, 1000)
-                        .isEmpty()
+        assertTrue(challengesDao
+                .findIncomingChallengesByOpponentLoginInput(toNegative, "login_test",  0, 1000)
+                .isEmpty()
         );
 
         for (String input: List.of("login", "test")) {

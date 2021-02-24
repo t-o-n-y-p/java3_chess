@@ -53,7 +53,7 @@ public class ChallengesDaoTest {
                         currentColor = Color.WHITE;
                     }
                 }
-                sleep(1000);
+                sleep(100);
             }
         }
         manager.getTransaction().commit();

@@ -18,7 +18,7 @@ public class GamesDao {
         return manager.createQuery(
                 "from Game where white = :user or black = :user " +
                         "order by isCompleted, case " +
-                            "when playerToMove = :user then 0 " +
+                            "when playerToMove = :user and isCompleted = false then 0 " +
                             "else 1 " +
                         "end, lastModifiedTimestamp desc",
                 Game.class)
@@ -33,7 +33,7 @@ public class GamesDao {
                 "from Game g where (white = :user and g.black.login like concat('%', :input, '%')) " +
                         "or (black = :user and g.white.login like concat('%', :input, '%')) " +
                         "order by isCompleted, case " +
-                            "when playerToMove = :user then 0 " +
+                            "when playerToMove = :user and isCompleted = false then 0 " +
                             "else 1 " +
                         "end, lastModifiedTimestamp desc",
                 Game.class)

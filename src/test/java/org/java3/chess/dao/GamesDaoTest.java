@@ -120,7 +120,7 @@ public class GamesDaoTest {
             List<Game> expectedResult = allCreatedGames.stream()
                     .filter(g -> g.getWhite().equals(player) || g.getBlack().equals(player))
                     .sorted(Comparator.comparing(Game::isCompleted)
-                            .thenComparing(g -> !g.getPlayerToMove().equals(player))
+                            .thenComparing(g -> !g.getPlayerToMove().equals(player) && !g.isCompleted())
                             .thenComparing(Comparator.comparing(Game::getLastModifiedTimestamp).reversed()))
                     .collect(Collectors.toList());
             assertEquals(expectedResult, actualResult);

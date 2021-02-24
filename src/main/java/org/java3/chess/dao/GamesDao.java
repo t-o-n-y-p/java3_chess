@@ -20,7 +20,7 @@ public class GamesDao {
                         "order by isCompleted, case " +
                             "when playerToMove = :user then 0 " +
                             "else 1 " +
-                        "end",
+                        "end, lastModifiedTimestamp desc",
                 Game.class)
                 .setParameter("user", user)
                 .setFirstResult(offset)
@@ -35,7 +35,7 @@ public class GamesDao {
                         "order by isCompleted, case " +
                             "when playerToMove = :user then 0 " +
                             "else 1 " +
-                        "end",
+                        "end, lastModifiedTimestamp desc",
                 Game.class)
                 .setParameter("input", input)
                 .setParameter("user", user)

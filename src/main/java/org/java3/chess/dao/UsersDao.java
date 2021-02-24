@@ -36,7 +36,10 @@ public class UsersDao {
     }
 
     public List<User> findOpponentsByRating(User user, double rating, double threshold, int offset, int limit) {
-        return manager.createQuery("from User where rating >= :start and rating <= :end and id != :id", User.class)
+        return manager.createQuery(
+                "from User where rating >= :start and rating <= :end and id != :id " +
+                        "order by rating desc",
+                User.class)
                 .setParameter("start", rating - threshold)
                 .setParameter("end", rating + threshold)
                 .setParameter("id", user.getId())
@@ -47,8 +50,10 @@ public class UsersDao {
 
     public List<User> findOpponentsByRatingAndLoginInput
             (User user, String input, double rating, double threshold, int offset, int limit) {
-        return manager.createQuery("from User where login like concat('%', :input, '%') " +
-                "and rating >= :start and rating <= :end and id != :id", User.class)
+        return manager.createQuery(
+                "from User where login like concat('%', :input, '%') and rating >= :start and rating <= :end " +
+                        "and id != :id order by rating desc",
+                User.class)
                 .setParameter("input", input)
                 .setParameter("start", rating - threshold)
                 .setParameter("end", rating + threshold)

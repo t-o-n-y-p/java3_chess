@@ -73,13 +73,13 @@ public class ChallengesDaoTest {
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     public void findIncomingChallenges() {
         User noChallenges = allCreatedUsers.stream()
-                .filter(u -> u.getLogin().contains("10") || u.getLogin().contains("11"))
+                .filter(u -> u.getLogin().matches("[^\\d]+[1][0-1]"))
                 .findAny()
                 .get();
         assertTrue(challengesDao.findIncomingChallenges(noChallenges, 0, 1000).isEmpty());
 
         User to = allCreatedUsers.stream()
-                .filter(u -> !u.getLogin().contains("10") && !u.getLogin().contains("11"))
+                .filter(u -> !u.getLogin().matches("[^\\d]+[1][0-1]"))
                 .findAny()
                 .get();
         List<Challenge> actualResult = challengesDao.findIncomingChallenges(to, 0, 1000);
@@ -110,7 +110,7 @@ public class ChallengesDaoTest {
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     public void findIncomingChallengesByOpponentLoginInput() {
         User noChallenges = allCreatedUsers.stream()
-                .filter(u -> u.getLogin().contains("10") || u.getLogin().contains("11"))
+                .filter(u -> u.getLogin().matches("[^\\d]+[1][0-1]"))
                 .findAny()
                 .get();
         assertTrue(
@@ -118,7 +118,7 @@ public class ChallengesDaoTest {
                         .isEmpty()
         );
         User toNegative = allCreatedUsers.stream()
-                .filter(u -> !u.getLogin().contains("10") && !u.getLogin().contains("11"))
+                .filter(u -> !u.getLogin().matches("[^\\d]+[1][0-1]"))
                 .findAny()
                 .get();
         assertTrue(
@@ -128,7 +128,7 @@ public class ChallengesDaoTest {
 
         for (String input: List.of("login", "test")) {
             User to = allCreatedUsers.stream()
-                    .filter(u -> !u.getLogin().contains("10") && !u.getLogin().contains("11") && !u.getLogin().contains(input))
+                    .filter(u -> !u.getLogin().matches("[^\\d]+[1][0-1]") && !u.getLogin().contains(input))
                     .findAny()
                     .get();
             List<Challenge> actualResult = challengesDao.findIncomingChallengesByOpponentLoginInput(

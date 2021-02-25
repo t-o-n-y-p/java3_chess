@@ -17,8 +17,9 @@ public class GamesDao {
     public List<Game> findByUser(User user, int offset, int limit) {
         return manager.createQuery(
                 "from Game where white = :user or black = :user " +
-                        "order by isCompleted, case " +
-                            "when playerToMove = :user and isCompleted = false then 0 " +
+                        "order by case " +
+                            "when isCompleted = true then 2" +
+                            "when playerToMove = :user then 0 " +
                             "else 1 " +
                         "end, lastModifiedTimestamp desc", Game.class)
                 .setParameter("user", user)
@@ -31,8 +32,9 @@ public class GamesDao {
         return manager.createQuery(
                 "from Game g where (white = :user and g.black.login like concat('%', :input, '%')) " +
                         "or (black = :user and g.white.login like concat('%', :input, '%')) " +
-                        "order by isCompleted, case " +
-                            "when playerToMove = :user and isCompleted = false then 0 " +
+                        "order by case " +
+                            "when isCompleted = true then 2" +
+                            "when playerToMove = :user then 0 " +
                             "else 1 " +
                         "end, lastModifiedTimestamp desc", Game.class)
                 .setParameter("input", input)
